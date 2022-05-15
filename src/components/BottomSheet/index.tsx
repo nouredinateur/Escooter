@@ -26,6 +26,7 @@ export function BottomSheet({
             animationIn={"bounce"}
             animationOut={"bounceOutDown"}
             avoidKeyboard={false}
+
         >
             {children}
         </Modal>
