@@ -23,18 +23,20 @@ export interface ImainStands {
 }
 
 export interface IstationState {
-  name: String;
-  contractName: String;
-  address: String;
-  position: Iposition;
-  banking: boolean;
-  bonus: boolean;
-  status: String;
-  lastUpdate: String;
-  connected: boolean;
-  overflow: boolean;
-  shape: any;
-  totalStands: ItotalStands;
-  mainStands: any;
-  overflowStands: any;
+  name?: String;
+  contract_name?: String;
+  address?: String;
+  position?: Iposition;
+  banking?: boolean;
+  bonus?: boolean;
+  status?: String;
+  available_bikes?: number;
+  bike_stands?: number;
+  lastUpdate?: String;
+  connected?: boolean;
+  overflow?: boolean;
+  shape?: any;
+  totalStands?: ItotalStands;
+  mainStands?: any;
+  overflowStands?: any;
 }
