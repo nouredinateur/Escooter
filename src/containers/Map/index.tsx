@@ -11,22 +11,28 @@ import JSONTree from 'react-native-json-tree';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { BottomSheet } from '../../components/BottomSheet';
-import { IstationState } from './types';
-import { selectStations } from '../../containers/Map/slice/selectors';
-import { getStationsOfaContractAction } from '../../containers/Map/slice/actions';
-import { useMapSlice } from '../../containers/Map/slice';
-import { useDispatch, useSelector } from 'react-redux';
+import { IstationState } from './slice/types';
+
 const APY_KEY = '62e354ca604253c43915eb3bc7656c2252621e5e';
 const initialStationeState: IstationState = {}
 const Map = () => {
-    useMapSlice()
+    const [data, setData] = useState<any>([]);
     const [visible, setVisible] = useState(false);
     const [station, setStation] = useState(initialStationeState)
-    const data = useSelector(selectStations)
-    const dispatch = useDispatch()
+
     useEffect(() => {
-        dispatch(getStationsOfaContractAction())
+        fetchStations()
     }, [])
+    const fetchStations = async () => {
+        try {
+            const response = await fetch(`https://api.jcdecaux.com/vls/v1/stations?contract=Lyon&apiKey=${APY_KEY}`)
+            const result = await response.json()
+            setData(result)
+        } catch (error) {
+            console.log('error', error)
+        }
+    }
+
     const toggleBottomSheet = () => {
         setVisible(!visible)
     }
@@ -42,7 +48,7 @@ const Map = () => {
                     longitudeDelta: 0.0421,
                 }}
             >
-                {/* {data?.map((station: any, index: any) => (
+                {data?.map((station: any, index: any) => (
                     <Marker
                         key={station.number}
                         coordinate={{ latitude: station.position.lat, longitude: station.position.lng }}
@@ -52,7 +58,7 @@ const Map = () => {
                             setStation(station)
                         }}
                     />)
-                )} */}
+                )}
             </MapView>
             <BottomSheet
                 visible={visible}
