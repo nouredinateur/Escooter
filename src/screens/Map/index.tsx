@@ -5,32 +5,34 @@ import {
     StyleSheet,
     Text,
     View,
+    ActivityIndicator
 } from 'react-native';
+import { useQuery } from 'react-query'
 import MapView, { Marker } from 'react-native-maps';
 import JSONTree from 'react-native-json-tree';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
-import { BottomSheet } from '../../components/BottomSheet';
 import { IstationState } from './types';
+import { BottomSheet } from '../../components/BottomSheet';
 
 const APY_KEY = '62e354ca604253c43915eb3bc7656c2252621e5e';
 const initialStationeState: IstationState = {}
 const Map = () => {
-    const [data, setData] = useState<any>([]);
     const [visible, setVisible] = useState(false);
     const [station, setStation] = useState(initialStationeState)
 
-    useEffect(() => {
-        fetchStations()
-    }, [])
-    const fetchStations = async () => {
-        try {
-            const response = await fetch(`https://api.jcdecaux.com/vls/v1/stations?contract=Lyon&apiKey=${APY_KEY}`)
-            const result = await response.json()
-            setData(result)
-        } catch (error) {
-            console.log('error', error)
+    const { isLoading, isError, data, error } = useQuery('markers', async () => {
+        const response = await fetch(`https://api.jcdecaux.com/vls/v1/stations?contract=Lyon&apiKey=${APY_KEY}`)
+        if (!response.ok) {
+            throw new Error('Network response was not ok')
         }
+        return response.json()
+    })
+
+    if (isLoading) {
+        return (
+            <ActivityIndicator size={"large"} style={{ width: '100%', height: '100%' }} />
+        )
     }
 
     const toggleBottomSheet = () => {
@@ -48,17 +50,19 @@ const Map = () => {
                     longitudeDelta: 0.0421,
                 }}
             >
-                {data?.map((station: any, index: any) => (
-                    <Marker
-                        key={station.number}
-                        coordinate={{ latitude: station.position.lat, longitude: station.position.lng }}
-                        title={station.name}
-                        onPress={() => {
-                            setVisible(!visible)
-                            setStation(station)
-                        }}
-                    />)
-                )}
+                {
+                    data?.map((station: any, index: any) => (
+                        <Marker
+                            key={station.number}
+                            coordinate={{ latitude: station.position.lat, longitude: station.position.lng }}
+                            title={station.name}
+                            onPress={() => {
+                                setVisible(!visible)
+                                setStation(station)
+                            }}
+                        />)
+                    )
+                }
             </MapView>
             <BottomSheet
                 visible={visible}
@@ -105,7 +109,7 @@ const Map = () => {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1, //the container will fill the whole screen.
+        flex: 1,
         justifyContent: "flex-end",
         alignItems: "center",
     },
