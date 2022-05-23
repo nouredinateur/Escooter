@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
-    SafeAreaView,
-    ScrollView,
+
     StyleSheet,
     Text,
     View,
@@ -38,8 +37,9 @@ const Map = () => {
     const toggleBottomSheet = () => {
         setVisible(!visible)
     }
+
     return (
-        <>
+        <View style={styles.container}>
             <MapView
                 style={styles.map}
                 mapType={'standard'}
@@ -103,7 +103,7 @@ const Map = () => {
                     </View>
                 </View>
             </BottomSheet>
-        </>
+        </View>
     )
 }
 
@@ -112,9 +112,12 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: "flex-end",
         alignItems: "center",
+        width: "100%"
     },
     map: {
         ...StyleSheet.absoluteFillObject,
+        width: "100%",
+        height: "100%"
     },
     BottomSheet: {
         width: '100%',
