@@ -10,13 +10,15 @@ import {BottomSheet} from '../../components/BottomSheet';
 
 const APY_KEY = '62e354ca604253c43915eb3bc7656c2252621e5e';
 const initialStationeState: IstationState = {};
+const CITY = 'lyon';
+
 const Map = () => {
   const [visible, setVisible] = useState(false);
   const [station, setStation] = useState(initialStationeState);
 
   const {isLoading, isError, data, error} = useQuery('markers', async () => {
     const response = await fetch(
-      `https://api.jcdecaux.com/vls/v1/stations?contract=Lyon&apiKey=${APY_KEY}`,
+      `https://api.jcdecaux.com/vls/v1/stations?contract=${CITY}&apiKey=${APY_KEY}`,
     );
     if (!response.ok) {
       throw new Error('Network response was not ok');
@@ -38,8 +40,9 @@ const Map = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <View className="flex-1 justify-end items-center w-full">
       <MapView
+        className=""
         style={styles.map}
         mapType={'standard'}
         initialRegion={{
@@ -67,43 +70,32 @@ const Map = () => {
         visible={visible}
         onBackButtonPress={toggleBottomSheet}
         onBackdropPress={toggleBottomSheet}>
-        <View style={styles.BottomSheet}>
-          <View style={styles.nameCard}>
+        <View className="mt-6 w-full h-2/6 bg-[#efefef] rounded-tr-xl rounded-tl-xl">
+          <View className="flex-row w-full justify-between py-3 px-4 bg-[#131636] rounded-tr-lg rounded-tl-lg shadow-lg">
             <View>
-              <Text style={{color: '#efefef', fontWeight: '700', fontSize: 14}}>
+              <Text className="text-[#efefef] font-semibold text-base">
                 {station.name}
               </Text>
-              <View style={{flexDirection: 'row'}}>
-                <Text
-                  style={{
-                    color: '#f48128',
-                    fontSize: 16,
-                    fontWeight: '700',
-                    paddingRight: 4,
-                  }}>
+              <View className="flex-row">
+                <Text className="text-[#f48128] text-base font-semibold pr-1">
                   {station.contract_name}
                 </Text>
                 <Text
-                  style={{
-                    color: '#d8d8d8',
-                    fontSize: 12,
-                    width: 260,
-                    paddingVertical: 4,
-                  }}>
+                  className="text-[#d8d8d8] text-sm w-auto py-1">
                   {station.address}
                 </Text>
               </View>
             </View>
             {station.status === 'OPEN' ? (
-              <View style={styles.iconHolder}>
-                <Text style={{color: '#52b95f', fontSize: 12}}>
+              <View>
+                <Text className='text-[#52b95f] text-sm'>
                   {station.status}
                 </Text>
                 <FontAwesome5 name="door-open" color={'#52b95f'} size={16} />
               </View>
             ) : (
-              <View style={styles.iconHolder}>
-                <Text style={{color: 'red', fontSize: 12}}>
+              <View className="flex-row w-12 justify-between items-center">
+                <Text className='text-red-500 text-sm'>
                   {station.status}
                 </Text>
                 <FontAwesome5 name="door-closed" color={'red'} size={16} />
@@ -112,41 +104,25 @@ const Map = () => {
           </View>
           <View>
             <View>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  backgroundColor: 'white',
-                  padding: 20,
-                  borderBottomColor: '#131636',
-                  borderBottomWidth: 2,
-                }}>
+              <View className="flex-row bg-white py-6 border-b-[#131636] border-b-2">
                 <MaterialCommunityIcons
                   name="bike"
                   style={{paddingHorizontal: 16}}
                   color={'#f48128'}
                   size={35}
                 />
-                <Text
-                  style={{color: '#f48128', fontSize: 16, paddingVertical: 8}}>
+                <Text className="text-[#f48128] text-base py-1">
                   {station.available_bikes} available bikes
                 </Text>
               </View>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  backgroundColor: 'white',
-                  padding: 20,
-                  borderBottomColor: '#131636',
-                  borderBottomWidth: 2,
-                }}>
+              <View className="flex-row py-6 first-letter:bg-white border-b-[#131636] border-b-2">
                 <MaterialCommunityIcons
                   name="bike"
                   style={{paddingHorizontal: 16}}
                   color={'#131636'}
                   size={35}
                 />
-                <Text
-                  style={{color: '#131636', fontSize: 16, paddingVertical: 8}}>
+                <Text className="text-[#131636] text-base py-1">
                   has {station.bike_stands} spots
                 </Text>
               </View>
@@ -160,46 +136,10 @@ const Map = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-    width: '100%',
-  },
   map: {
     ...StyleSheet.absoluteFillObject,
     width: '100%',
     height: '100%',
-  },
-  BottomSheet: {
-    width: '100%',
-    height: 226,
-    backgroundColor: '#efefef',
-    borderTopRightRadius: 16,
-    borderTopLeftRadius: 16,
-  },
-  nameCard: {
-    flexDirection: 'row',
-    padding: 16,
-    width: '100%',
-    justifyContent: 'space-between',
-    backgroundColor: '#131636',
-    borderTopRightRadius: 16,
-    borderTopLeftRadius: 16,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 3,
-    },
-    shadowOpacity: 0.27,
-    shadowRadius: 4.65,
-    elevation: 6,
-  },
-  iconHolder: {
-    flexDirection: 'row',
-    width: 54,
-    justifyContent: 'space-between',
-    alignItems: 'center',
   },
 });
 export default Map;
